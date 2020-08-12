@@ -74,6 +74,23 @@ export const Mutation = mutationType({
       },
     })
 
+    t.field('createDraftMaterial', {
+      type: 'Material',
+      args: {
+        name: stringArg(),
+      },
+      resolve: (parent, { name }, ctx) => {
+        const userId = getUserId(ctx)
+        if (!userId) throw new Error('Could not authenticate user.')
+        return ctx.prisma.material.create({
+          data: {
+            name,
+            supplier: { connect: { id: Number(userId) } },
+          },
+        })
+      },
+    })
+
     t.field('deletePost', {
       type: 'Post',
       nullable: true,

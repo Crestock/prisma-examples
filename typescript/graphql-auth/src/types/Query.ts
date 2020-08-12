@@ -62,5 +62,45 @@ export const Query = queryType({
         })
       },
     })
+
+    /// NEW RESOLVERS TO STAY
+
+    t.list.field('feed', {
+      type: 'Post',
+      resolve: (parent, args, ctx) => {
+        return ctx.prisma.post.findMany({
+          where: { published: true },
+        })
+      },
+    })
+
+    t.list.field('filterMaterials', {
+      type: 'Material',
+      args: {
+        searchString: stringArg({ nullable: true }),
+      },
+      resolve: (parent, { searchString }, ctx) => {
+        return ctx.prisma.material.findMany({
+          where: {
+            name: {
+              contains: searchString,
+            },
+          },
+        })
+      },
+    })
+
+    t.field('material', {
+      type: 'Material',
+      nullable: true,
+      args: { id: intArg() },
+      resolve: (parent, { id }, ctx) => {
+        return ctx.prisma.material.findOne({
+          where: {
+            id: Number(id),
+          },
+        })
+      },
+    })
   },
 })

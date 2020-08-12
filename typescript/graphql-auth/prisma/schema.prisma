@@ -7,6 +7,7 @@ datasource db {
   url      = "postgres://postgres:postgres@localhost:5432/stellar-graphql"
 }
 
+//post model primitive
 model Post {
   id        Int     @default(autoincrement()) @id
   title     String
@@ -16,10 +17,22 @@ model Post {
   authorId  Int?
 }
 
+//material model inspired by  Post model
+
+model Material {
+
+  id         Int    @default(autoincrement()) @id
+  name       String @unique
+  //prices will go here
+  supplier   User?  @relation(fields: [supplierId], references: [id])
+  supplierId Int?
+}
+
 model User {
-  id       Int     @default(autoincrement()) @id
-  email    String  @unique
-  password String  @default("")
-  name     String?
-  posts    Post[]
+  id        Int        @default(autoincrement()) @id
+  email     String     @unique
+  password  String     @default("")
+  name      String?
+  posts     Post[]
+  materials Material[]
 }

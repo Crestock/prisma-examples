@@ -7,16 +7,49 @@ type AuthPayload {
   user: User!
 }
 
+enum Currency {
+  EUR
+  GBP
+  USD
+}
+
 type Material {
   id: Int!
   name: String!
-  supplier: User
+  price(skip: Int): [Price!]!
+  supplier(skip: Int): [User!]!
+}
+
+input MaterialCreateManyWithoutSupplierInput {
+  connect: [MaterialWhereUniqueInput!]
+  create: [MaterialCreateWithoutSupplierInput!]
+}
+
+input MaterialCreateOneWithoutPriceInput {
+  connect: MaterialWhereUniqueInput
+  create: MaterialCreateWithoutPriceInput
+}
+
+input MaterialCreateWithoutPriceInput {
+  name: String!
+  supplier: UserCreateManyWithoutMaterialsInput
+}
+
+input MaterialCreateWithoutSupplierInput {
+  name: String!
+  price: PriceCreateManyWithoutMaterialInput
+}
+
+input MaterialWhereUniqueInput {
+  id: Int
+  name: String
 }
 
 type Mutation {
   createDraft(content: String, title: String!): Post!
   createDraftMaterial(name: String): Material!
-  deletePost(id: Int!): Post
+  createOnePrice(data: PriceCreateInput!): Price!
+  deleteMaterial(id: Int!): Material
   login(email: String!, password: String!): AuthPayload!
   publish(id: Int): Post
   signup(email: String!, name: String, password: String!): AuthPayload!
@@ -30,7 +63,64 @@ type Post {
   title: String!
 }
 
+input PostCreateManyWithoutAuthorInput {
+  connect: [PostWhereUniqueInput!]
+  create: [PostCreateWithoutAuthorInput!]
+}
+
+input PostCreateWithoutAuthorInput {
+  content: String
+  published: Boolean
+  title: String!
+}
+
+input PostWhereUniqueInput {
+  id: Int
+}
+
+type Price {
+  author: User!
+  currency: Currency!
+  id: Int!
+  material: Material!
+  value: Float!
+}
+
+input PriceCreateInput {
+  author: UserCreateOneWithoutPriceInput!
+  currency: Currency
+  material: MaterialCreateOneWithoutPriceInput!
+  value: Float!
+}
+
+input PriceCreateManyWithoutAuthorInput {
+  connect: [PriceWhereUniqueInput!]
+  create: [PriceCreateWithoutAuthorInput!]
+}
+
+input PriceCreateManyWithoutMaterialInput {
+  connect: [PriceWhereUniqueInput!]
+  create: [PriceCreateWithoutMaterialInput!]
+}
+
+input PriceCreateWithoutAuthorInput {
+  currency: Currency
+  material: MaterialCreateOneWithoutPriceInput!
+  value: Float!
+}
+
+input PriceCreateWithoutMaterialInput {
+  author: UserCreateOneWithoutPriceInput!
+  currency: Currency
+  value: Float!
+}
+
+input PriceWhereUniqueInput {
+  id: Int
+}
+
 type Query {
+  allUsers: [User!]!
   feed: [Post!]!
   filterMaterials(searchString: String): [Material!]!
   filterPosts(searchString: String): [Post!]!
@@ -45,4 +135,36 @@ type User {
   materials: [Material!]!
   name: String
   posts: [Post!]!
+  price(skip: Int): [Price!]!
+}
+
+input UserCreateManyWithoutMaterialsInput {
+  connect: [UserWhereUniqueInput!]
+  create: [UserCreateWithoutMaterialsInput!]
+}
+
+input UserCreateOneWithoutPriceInput {
+  connect: UserWhereUniqueInput
+  create: UserCreateWithoutPriceInput
+}
+
+input UserCreateWithoutMaterialsInput {
+  email: String!
+  name: String
+  password: String
+  posts: PostCreateManyWithoutAuthorInput
+  price: PriceCreateManyWithoutAuthorInput
+}
+
+input UserCreateWithoutPriceInput {
+  email: String!
+  materials: MaterialCreateManyWithoutSupplierInput
+  name: String
+  password: String
+  posts: PostCreateManyWithoutAuthorInput
+}
+
+input UserWhereUniqueInput {
+  email: String
+  id: Int
 }

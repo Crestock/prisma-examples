@@ -6,5 +6,6 @@ export const Material = objectType({
     t.model.id()
     t.model.name()
     t.model.supplier()
+    t.model.price()
   },
 })

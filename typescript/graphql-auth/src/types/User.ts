@@ -8,5 +8,6 @@ export const User = objectType({
     t.model.email()
     t.model.posts({ pagination: false })
     t.model.materials({ pagination: false })
+    t.model.price()
   },
 })

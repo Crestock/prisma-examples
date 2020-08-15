@@ -7,6 +7,12 @@ datasource db {
   url      = "postgres://postgres:postgres@localhost:5432/stellar-graphql"
 }
 
+enum Currency {
+  GBP
+  USD
+  EUR
+}
+
 //post model primitive
 model Post {
   id        Int     @default(autoincrement()) @id
@@ -21,11 +27,23 @@ model Post {
 
 model Material {
 
-  id         Int    @default(autoincrement()) @id
-  name       String @unique
+  id       Int     @default(autoincrement()) @id
+  name     String  @unique
   //prices will go here
-  supplier   User?  @relation(fields: [supplierId], references: [id])
-  supplierId Int?
+  supplier User[]
+  price    Price[]
+}
+
+//Price model
+//Contains the price quote for each material and the author of the quote
+model Price {
+  id         Int      @default(autoincrement()) @id
+  value      Float
+  currency   Currency @default(GBP)
+  author     User     @relation(fields: [authorId], references: [id])
+  authorId   Int
+  material   Material @relation(fields: [materialId], references: [id])
+  materialId Int
 }
 
 model User {
@@ -35,4 +53,5 @@ model User {
   name      String?
   posts     Post[]
   materials Material[]
+  price     Price[]
 }

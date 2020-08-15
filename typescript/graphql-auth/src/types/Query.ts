@@ -1,5 +1,7 @@
 import { intArg, queryType, stringArg } from '@nexus/schema'
 import { getUserId } from '../utils'
+import { prismaVersion } from '@prisma/client'
+import { createLexer } from 'graphql'
 
 export const Query = queryType({
   definition(t) {
@@ -13,6 +15,12 @@ export const Query = queryType({
             id: Number(userId),
           },
         })
+      },
+    })
+    t.list.field('allUsers', {
+      type: 'User',
+      resolve: (parent, args, ctx) => {
+        return ctx.prisma.user.findMany()
       },
     })
 
@@ -64,15 +72,6 @@ export const Query = queryType({
     })
 
     /// NEW RESOLVERS TO STAY
-
-    t.list.field('feed', {
-      type: 'Post',
-      resolve: (parent, args, ctx) => {
-        return ctx.prisma.post.findMany({
-          where: { published: true },
-        })
-      },
-    })
 
     t.list.field('filterMaterials', {
       type: 'Material',

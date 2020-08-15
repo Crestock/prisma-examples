@@ -73,6 +73,9 @@ export const Mutation = mutationType({
         })
       },
     })
+    //
+    t.crud.createOnePrice()
+    //
 
     t.field('createDraftMaterial', {
       type: 'Material',
@@ -91,12 +94,12 @@ export const Mutation = mutationType({
       },
     })
 
-    t.field('deletePost', {
-      type: 'Post',
+    t.field('deleteMaterial', {
+      type: 'Material',
       nullable: true,
       args: { id: intArg({ nullable: false }) },
       resolve: (parent, { id }, ctx) => {
-        return ctx.prisma.post.delete({
+        return ctx.prisma.material.delete({
           where: {
             id,
           },
